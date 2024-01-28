@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import UserModel from '../../DB/model/User.model.js'
+import UserModel from '../../DB/model/user.model.js'
 import { asynchandlier } from '../services/erroeHandling.js'
 
 
