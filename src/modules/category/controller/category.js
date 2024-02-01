@@ -4,6 +4,7 @@ import { asynchandlier } from '../../../services/erroeHandling.js';
 import fs from 'fs';
 import { pathName } from '../../../services/multer.js';
 import path from 'path';
+import { Error } from 'mongoose';
 
 
 
@@ -24,7 +25,8 @@ export const createCategory = asynchandlier(async (req, res) => {
             return res.status(400).json({ error: 'image is required' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Unhandled Promise Rejection', message: error.message });
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'catch error', error});
     }
 });
 
@@ -35,9 +37,12 @@ export const getAllCategories = asynchandlier(async (req, res) => {
 });
 
 // Get specific category by ID
-export const getSpecificCategory = asynchandlier(async (req, res) => {
+export const getSpecificCategory = asynchandlier(async (req, res,next) => {
     const { id } = req.params;
     const Category = await CategoryModel.findById(id);
+    if (!Category) {
+        next (new Error("Category not found"))
+    }
     res.json({ message: 'Success', data: Category });
 });
 
@@ -74,8 +79,8 @@ export const updateCategory = asynchandlier( async (req, res, next) => {
 
         res.json({ message: 'Updated Category', data: updatedCategory });
     } catch (error) {
-        console.error('Error updating category:', error);
-        next(error);
+        console.log("catch error",error);
+       return res.status(200).json({ message: 'error updating category', error});
     }
 })
 
@@ -91,7 +96,7 @@ export const deleteCategory = asynchandlier(async (req, res, next) => {
 
         // Check if the category exists
         if (!category) {
-            return next(new AppError(`Category Not Found`, 404));
+            return next(new Error(`Category Not Found`, 404));
         }
 
         // Delete the image from Cloudinary
@@ -107,6 +112,7 @@ export const deleteCategory = asynchandlier(async (req, res, next) => {
 
         res.json({ message: 'Category Deleted', data: category });
     } catch (error) {
-        next(new AppError('Error deleting category', 500));
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'Error deleting category', error});
     }
 });

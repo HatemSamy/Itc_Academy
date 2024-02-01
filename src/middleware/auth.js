@@ -9,7 +9,6 @@ import { asynchandlier } from '../services/erroeHandling.js'
 
 export const Roles = {
     Admin: "Admin",
-   
     User: "user"
 
 }

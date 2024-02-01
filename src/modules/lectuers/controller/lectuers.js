@@ -44,7 +44,7 @@ export const createLectureWithFiles = asynchandlier(async (req, res, next) => {
         res.status(201).json({ message: 'Lecture created successfully', data: createdLecture });
     } catch (error) {
         console.error('Error creating lecture:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        res.status(500).json({ message: 'Error creating lecture', error });
     }
 })
 
@@ -57,7 +57,7 @@ export const getAllLecturers = async (req, res) => {
         res.json({ message: 'This is All Lecturers', data: lectures });
     } catch (error) {
         console.error('Error fetching lectures:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        res.status(500).json({ message: 'Error fetching lectures', error });
     }
 };
 
@@ -72,7 +72,7 @@ export const getSpecificLecturer = async (req, res, next) => {
         res.json({ message: 'Success', data: lecturer });
     } catch (error) {
         console.error('Error fetching specific lecturer:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        res.status(500).json({ message: 'Error fetching specific lecturer', error });
     }
 };
 
@@ -87,6 +87,8 @@ const deleteOldFile = async (filePath) => {
         }
     } catch (error) {
         console.error('Error deleting old file:', error);
+        res.status(500).json({ message: 'Error deleting old file', error });
+    
     }
 };
 

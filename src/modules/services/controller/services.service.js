@@ -24,7 +24,8 @@ export const createService = asynchandlier(async (req, res, next) => {
             return res.status(400).json({ error: 'File path not provided' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Unhandled Promise Rejection', message: error.message });
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'catch error', error});
     }
 });
 
@@ -42,7 +43,8 @@ export const getAllServices = asynchandlier(async (req, res, next) => {
         }
     
     } catch (error) {
-        res.status(500).json({ error: 'Unhandled Promise Rejection', message:error.message });
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'catch error', error});
     }
 });
 
@@ -77,8 +79,8 @@ export const updateService = asynchandlier(async (req, res, next) => {
 
         res.json({ message: 'Updated Service', data: updatedService });
     } catch (error) {
-        console.error('Error updating service:', error);
-        next(error);
+        console.log("Error updating service",error);
+        return res.status(200).json({ message: 'Error updating service', error});
     }
 });
 
@@ -92,7 +94,8 @@ export const getSpecificService = asynchandlier(async (req, res, next) => {
         }
         res.json({ message: 'Success', data: service });
     } catch (error) {
-        res.status(500).json({ error: 'Unhandled Promise Rejection', message: error.message });
+       console.log("catch error",error);
+       return res.status(200).json({ message: 'catch error', error});
     }
 });
 

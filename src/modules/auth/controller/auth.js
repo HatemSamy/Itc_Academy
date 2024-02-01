@@ -22,7 +22,9 @@ export const signup = asynchandlier(async (req, res, next) => {
         await newUser.save();
         res.status(200).json({ message: 'Signup Success', data: newUser });
     } catch (error) {
-        next(error);
+        console.log("catch error",error);
+       return res.status(200).json({ message: 'catch error', error});
+
     }
 })
 
@@ -46,7 +48,8 @@ export const signin = asynchandlier(async (req, res, next) => {
             return res.json({ message: 'E-mail Not Registered' });
         }
     } catch (error) {
-        next(error);
+        console.log("catch error",error);
+       return res.status(200).json({ message: 'catch error', error});
     }
 })
 
@@ -67,7 +70,8 @@ export const sendCode = asynchandlier(async (req, res, next) => {
         sendEmail(user.email, `<h1> Access Code</h1>`, accessCode);
         res.json({ message: "Code Send Successfully" });
     } catch (error) {
-        next(error);
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'catch error', error});
     }
 });
 
@@ -120,6 +124,7 @@ export const forgetPassword = async (req, res, next) => {
         console.log(hashpassword , updateUser);
         res.json({ message: "Password updated successfully", updateUser });
     } catch (error) {
-        next(error);
+        console.log("catch error",error);
+        return res.status(200).json({ message: 'catch error', error});
     }
 };
