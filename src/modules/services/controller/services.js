@@ -25,7 +25,7 @@ export const createService = asynchandlier(async (req, res, next) => {
         }
     } catch (error) {
         console.log("catch error",error);
-        return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch_error", { cause: 500 }))
     }
 });
 
@@ -41,10 +41,9 @@ export const getAllServices = asynchandlier(async (req, res, next) => {
             const services = await ServiceModel.find({categoryId:req.params.categoryId});
             res.json({ message: `This is All Services in category:${categoryFound.name}`, data: services });
         }
-    
     } catch (error) {
         console.log("catch error",error);
-        return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch_error", { cause: 500 }))
     }
 });
 
@@ -80,7 +79,7 @@ export const updateService = asynchandlier(async (req, res, next) => {
         res.json({ message: 'Updated Service', data: updatedService });
     } catch (error) {
         console.log("Error updating service",error);
-        return res.status(200).json({ message: 'Error updating service', error});
+        return next(new Error("catch_error", { cause: 500 }))
     }
 });
 
@@ -95,7 +94,7 @@ export const getSpecificService = asynchandlier(async (req, res, next) => {
         res.json({ message: 'Success', data: service });
     } catch (error) {
        console.log("catch error",error);
-       return res.status(200).json({ message: 'catch error', error});
+       return next(new Error("catch_error", { cause: 500 }))
     }
 });
 
@@ -118,6 +117,6 @@ export const deleteService = asynchandlier(async (req, res, next) => {
         await ServiceModel.findByIdAndDelete(id);
         res.json({ message: 'Service Deleted', data: service });
     } catch (error) {
-        next(new Error('Error deleting service', 500));
+        return next(new Error("Internal server error", { cause: 500 }))
     }
 });

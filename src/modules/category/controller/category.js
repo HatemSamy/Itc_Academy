@@ -26,7 +26,7 @@ export const createCategory = asynchandlier(async (req, res) => {
         }
     } catch (error) {
         console.log("catch error",error);
-        return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch error_fail to CreateCategory", { cause: 500 }))
     }
 });
 
@@ -80,10 +80,9 @@ export const updateCategory = asynchandlier( async (req, res, next) => {
         res.json({ message: 'Updated Category', data: updatedCategory });
     } catch (error) {
         console.log("catch error",error);
-       return res.status(200).json({ message: 'error updating category', error});
+        return next(new Error("catch error_", { cause: 500 }))
     }
 })
-
 
 
 // Delete category by ID
@@ -113,6 +112,6 @@ export const deleteCategory = asynchandlier(async (req, res, next) => {
         res.json({ message: 'Category Deleted', data: category });
     } catch (error) {
         console.log("catch error",error);
-        return res.status(200).json({ message: 'Error deleting category', error});
+        return next(new Error("catch error_Error deleting category", { cause: 500 }))
     }
 });

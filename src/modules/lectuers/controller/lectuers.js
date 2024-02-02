@@ -44,10 +44,9 @@ export const createLectureWithFiles = asynchandlier(async (req, res, next) => {
         res.status(201).json({ message: 'Lecture created successfully', data: createdLecture });
     } catch (error) {
         console.error('Error creating lecture:', error);
-        res.status(500).json({ message: 'Error creating lecture', error });
+        return next(new Error("Internal server error_Error creating lecture", { cause: 500 }))
     }
 })
-
 
 // *****************************************************
 
@@ -57,11 +56,12 @@ export const getAllLecturers = async (req, res) => {
         res.json({ message: 'This is All Lecturers', data: lectures });
     } catch (error) {
         console.error('Error fetching lectures:', error);
-        res.status(500).json({ message: 'Error fetching lectures', error });
+        return next(new Error("Internal server error_Error fetching lectures", { cause: 500 }))
     }
 };
 
- 
+ //*****************************************************
+
 export const getSpecificLecturer = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -72,11 +72,12 @@ export const getSpecificLecturer = async (req, res, next) => {
         res.json({ message: 'Success', data: lecturer });
     } catch (error) {
         console.error('Error fetching specific lecturer:', error);
-        res.status(500).json({ message: 'Error fetching specific lecturer', error });
+        return next(new Error("Internal server error", { cause: 500 }))
     }
 };
 
-
+ //*****************************************************
+ 
 const deleteOldFile = async (filePath) => {
     try {
         if (fs.existsSync(filePath)) {
@@ -87,12 +88,12 @@ const deleteOldFile = async (filePath) => {
         }
     } catch (error) {
         console.error('Error deleting old file:', error);
-        res.status(500).json({ message: 'Error deleting old file', error });
+        return next(new Error("Error deleting old file", { cause: 500 }))
     
     }
 };
 
-
+ //*****************************************************
 export const updateLecture = asynchandlier(async (req, res, next) => {
     const { lectureId } = req.params;
     try {
@@ -136,11 +137,12 @@ export const updateLecture = asynchandlier(async (req, res, next) => {
         // Return the updated lecture as a response
         res.status(200).json({ message: 'Lecture updated successfully', data: updatedLecture });
     } catch (error) {
-        console.error('Error updating lecture:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        console.error('Error updating lecture', error);
+        return next(new Error("Error updating lecture", { cause: 500 }))
     }
 });
 
+ //*****************************************************
 
 export const deleteLecture = asynchandlier(async (req, res, next) => {
     const { lectureId } = req.params;
@@ -168,7 +170,7 @@ export const deleteLecture = asynchandlier(async (req, res, next) => {
         res.status(200).json({ message: 'Lecture deleted successfully' });
     } catch (error) {
         console.error('Error deleting lecture:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        return next(new Error("Internal server error", { cause: 500 }))
     }
 });
 

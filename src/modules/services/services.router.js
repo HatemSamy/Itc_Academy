@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as ServiceController from './controller/services.service.js';
+import * as ServiceController from './controller/services.js';
 import { HME, myMulter, pathName } from '../../services/multer.js';
 import { AccessRoles, authentication } from '../../middleware/auth.js';
 

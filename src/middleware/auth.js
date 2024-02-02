@@ -3,10 +3,6 @@ import UserModel from '../../DB/model/user.model.js'
 import { asynchandlier } from '../services/erroeHandling.js'
 
 
-
-
-
-
 export const Roles = {
     Admin: "Admin",
     User: "user"
@@ -35,7 +31,7 @@ export const authentication = (accessRole) => {
         }
 
         const token = authorization.split(process.env.BearerKey)[1]
-        const decoded =  await jwt.verify(token,process.env.tokenSignature)
+        const decoded =  await jwt.verify(token , process.env.tokenSignature)
         if (!decoded.userId) {
             res.status(401).json({ message: "invalid token Payload" })
 

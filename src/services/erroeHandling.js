@@ -3,15 +3,9 @@
  export const asynchandlier = (fu)=>{
     return(req,res,next)=>{
         fu(req,res,next).catch(err=>{
-
-          //  res.status(500).json({massage:"catch error",errMas:err.message,stack:err.stack})
           next(new Error(err,{cuase:500}))
         })
     }
-
-
-
-
 
 
  }

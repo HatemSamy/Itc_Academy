@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs"
 import { asynchandlier } from '../../../services/erroeHandling.js';
 import UserModel from '../../../../DB/model/user.model.js';
 import { sendEmail } from '../../../services/email.js';
@@ -22,12 +22,10 @@ export const signup = asynchandlier(async (req, res, next) => {
         await newUser.save();
         res.status(200).json({ message: 'Signup Success', data: newUser });
     } catch (error) {
-        console.log("catch error",error);
-       return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch error_ fail to Signup", { cause: 500 }))
 
     }
 })
-
 
 
 // signin ............................>>>
@@ -49,7 +47,7 @@ export const signin = asynchandlier(async (req, res, next) => {
         }
     } catch (error) {
         console.log("catch error",error);
-       return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch error _ fail to signin", { cause: 500 }))
     }
 })
 
@@ -71,7 +69,7 @@ export const sendCode = asynchandlier(async (req, res, next) => {
         res.json({ message: "Code Send Successfully" });
     } catch (error) {
         console.log("catch error",error);
-        return res.status(200).json({ message: 'catch error', error});
+        return next(new Error("catch error_fail to sendcode", { cause: 500 }))
     }
 });
 
@@ -107,24 +105,30 @@ export const sendCode = asynchandlier(async (req, res, next) => {
 
 
 export const forgetPassword = async (req, res, next) => {
+    const { email, code, password } = req.body;
+    const saltRounds = process.env.SALTROUND ? parseInt(process.env.SALTROUND) : 9;
+    console.log(saltRounds);
     try {
-        const { email, code, password } = req.body;
-
-        const user = await UserModel.findOne({ email: email, code: code })
+        const user = await UserModel.findOne({ email, code });
 
         if (!user) {
-            return res.status(401).json({ message: "user not exist or In-valid code " });
+            return res.status(401).json({ message: "User does not exist or invalid code" });
         }
-        const hashpassword = await bcrypt.hashSync(password, parseInt(process.env.SALTROUND))
+
+        const hashpassword = bcrypt.hashSync(password , saltRounds)
+
         const updateUser = await UserModel.findOneAndUpdate(
-            { _id: user._id },
+            { email },
             { code: '', password: hashpassword },
             { new: true }
         );
-        console.log(hashpassword , updateUser);
-        res.json({ message: "Password updated successfully", updateUser });
+
+        if (!updateUser) {
+            throw new Error("Failed to reset password");
+        }
+
+        return res.json({ message: "Password updated successfully", updateUser });
     } catch (error) {
-        console.log("catch error",error);
-        return res.status(200).json({ message: 'catch error', error});
+        return next(error); 
     }
 };
