@@ -3,7 +3,7 @@
  export const asynchandlier = (fu)=>{
     return(req,res,next)=>{
         fu(req,res,next).catch(err=>{
-          next(new Error(err,{cuase:500}))
+          next(new Error(err,{cause:500}))
         })
     }
 
