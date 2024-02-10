@@ -15,7 +15,7 @@ const serviceSchema = new mongoose.Schema({
     imageUrl:String,
     typeOfService: {
         type: String,
-        enum: ['lectuers', 'trakes']
+        enum: ['Course', 'trak']
     }
 }, { timestamps: true });
 

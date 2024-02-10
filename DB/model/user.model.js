@@ -27,14 +27,17 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: [5, 'MinLength 5 Characters']
     },
-    code: {
-        type: String,
-    },
     role: {
         type: String,
         enum: ['user', 'Admin'],
         default: "user"
     },
+    enrolled_courses: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        }
+    ],
     passwordChangedAt: Date
 }, { timestamps: true });
 

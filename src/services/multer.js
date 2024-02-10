@@ -19,6 +19,8 @@ export const pathName = {
     userProfileCover: 'user/profile/cover',
     createproduct: 'products',
     CreateCategory: 'Category',
+    Course: 'Course',
+    Instructor: 'Instructor',
     lectureFiles: 'lectureFiles',
     serviceFiles: 'serviceFiles',
 
@@ -52,3 +54,16 @@ export function myMulter(pathName) {
     const upload = multer({ storage, fileFilter });
     return upload;
 }
+
+
+
+
+export const deleteOldImage = async (imageUrl) => {
+      if (fs.existsSync(imageUrl)) {
+        await fs.promises.unlink(imageUrl);
+        console.log('Old Image Deleted Successfully');
+      } else {
+        console.log('Old Image File Not Found');
+      }
+   
+  };

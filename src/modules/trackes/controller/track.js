@@ -1,131 +1,103 @@
-// const trakeModel = require('../../../databases/models/trackes.model')
-// const categoryModel = require('../../../databases/models/category.model')
-// const AppError = require('../../utils/AppError')
-// const { catchAsyncError } = require('../../middleware/catchAsyncError')
-// const cloudinary = require('cloudinary');
+import trakeModel from '../../../databases/models/trackes.model';
+import categoryModel from '../../../databases/models/category.model';
 
-// // **********************************************
-// cloudinary.v2.config({
-//     cloud_name: 'dofg9wmp0', 
-//     api_key: '663141422279326', 
-//     api_secret: 'R5M35Mx_R9MbiRp2yP_XSuSa3_Y' ,
-//     secure: true,
-// });
-// // **********************************************
+import { asynchandlier } from '../../../services/erroeHandling';
+import TrackModel from '../../../../DB/model/track.model';
 
-// module.exports.createTrakes = catchAsyncError(async (req, res,next) => {
+
+
+
+
+
+
+// **********************************************
+
+// export const createTrakes = asynchandlier(async (req, res, next) => {
 //     try {
-//         if (req.file && req.file.path) {
-//             cloudinary.v2.uploader.upload(req.file.path, async (error, result) => {
-//                 if (error) {
-//                     return res.status(500).json({ error: 'Cloudinary upload failed' });
-//                 }
-//                 const categoryFound = await categoryModel.findById(req.body.categoryId);
-//                 if (!categoryFound) {
-//                     return next(new AppError('Category Not Found', 409));
-//                 }
-//                 req.body.image = result.secure_url;
-//                 req.body.name = req.body.name || '';
-//                 let Trake = new trakeModel(req.body);
-//                 await Trake.save();
-//                 return res.status(200).json({ message: 'Success', data: Trake });
-//             });
-//         } else {
-//             return res.status(400).json({ error: 'File path not provided' });
+//         if (!req.file && req.file.path) {
+//             return next(new Error("image is required"))
+
 //         }
 
+//         const categoryFound = await categoryModel.findById(req.body.categoryId);
+//         if (!categoryFound) {
+//             return next(new Error('Category Not Found', { cause: 404 }));
+//         }
+//         const image = req.file;
+//         const newImageUrl = image ? image.path : '';
+//         req.body.image = newImageUrl
+//         req.body.serviceId = req.params.serviceId
+//         const Trak = new TrackModel(req.body);
+//         await Trak.save();
+//         return res.status(200).json({ message: 'Success', data: Trak });
+
+
 //     } catch (error) {
-//         res.status(500).json({ error: 'Unhandled Promise Rejection', message: error.message });
+//         return next(new Error('cach_error', { cause: 500 }));
+
 //     }
 // });
 
+// export const getAllTraks = asynchandlier(async (req, res) => {
+//     const Traks = await TrackModel.find({});
+//     if (!Traks) {
+//         return next(new Error(`Trak Not Found`, { cause: 404 }));
 
-// module.exports.getAllTrakes = catchAsyncError(async (req, res) => {
-//     let Trakes = await trakeModel.find({})
-//     res.json({ message: 'this is All Trakes', data: Trakes })
-// })
-// module.exports.getSpecificTrake = catchAsyncError(async (req, res,next) => {
-//     const { id } = req.params
-//     let Trake = await trakeModel.findById(id)
-//     if (!Trake) {
-//         return next(new AppError(`Trake Not Found`, 404))
 //     }
-//     res.json({ message: 'Success', data: Trake })
-// })
-// // module.exports.searchProducts = catchAsyncError(async (req, res) => {
-// //     let apiFeatuers = new ApiFeatuers(productModel.find(), req.query).search()
-// //     let Products = await apiFeatuers.mongooseQuery
-// //     res.json({ message: 'this is All Products', Products })
-// // })
+//     res.json({ message: 'this is All Traks', data: Traks });
+// });
 
 
-// module.exports.updateTrake = catchAsyncError( async (req, res, next) => {
+// export const getSpecificTrake = asynchandlier(async (req, res, next) => {
+//     const { id } = req.params;
+//     const Trak = await trakeModel.findById(id);
+//     if (!Trak) {
+//         return next(new Error(`Trak Not Found`, 404));
+//     }
+//     res.json({ message: 'Success', data: Trak });
+// });
+
+// export const updateTrake = asynchandlier(async (req, res, next) => {
 //     try {
 //         const { id } = req.params;
-//         let Trake = await trakeModel.findById(id);
-//         if (!Trake) {
-//             return next(new AppError(`Trake Not Found`, 404));
-//         }
-//         if (req.file && req.file.path) {
-//             cloudinary.v2.uploader.upload(req.file.path, async (error, result) => {
-//                 if (error) {
-//                     return res.status(500).json({ error: 'Cloudinary upload failed' });
-//                 }
-//                 Trake.image = result.secure_url;
-//                 Trake.name = req.body.name || Trake.name; 
-//                 await Trake.save();
-//                 return res.status(200).json({ message: 'Updated Trake with new image', data: Trake });
-//             });
-//         } else {
-//             Trake.name = req.body.name || Trake.name; 
-//             Trake.description = req.body.description || Trake.description; 
-//             Trake.categoryId = req.body.categoryId || Trake.categoryId; 
-//             Trake.diplomaName = req.body.diplomaName || Trake.diplomaName; 
-//             Trake.serviceType = req.body.serviceType || Trake.serviceType; 
-//             Trake.servicePrice = req.body.servicePrice || Trake.servicePrice; 
-//             Trake.serviceTime = req.body.serviceTime || Trake.serviceTime; 
-//             await Trake.save();
 
-//             return res.status(200).json({ message: 'Updated Trake without changing the image', data: Trake });
+//         let updateFields = req.body;
+//         if (req.file && req.file.path) {
+//             updateFields.image = req.file.path;
+//         }
+
+//         const updatedTrak = await trakeModel.findByIdAndUpdate(id, updateFields, { new: true });
+
+//         if (!updatedTrak) {
+//             return next(new Error(`Trak Not Found`, { cause: 404 }));
+//         }
+
+//         if (req.file && req.file.path) {
+//             return res.status(200).json({ message: 'Updated Trak with new image', data: updatedTrak });
+//         } else {
+//             return res.status(200).json({ message: 'Updated Trak without changing the image', data: updatedTrak });
 //         }
 //     } catch (error) {
-//         res.status(500).json({ error: 'Unhandled Promise Rejection', message: error.message });
+//         return next(new Error(`cach_error`, { cause: 500 }));
+
 //     }
 // });
 
 
-
-// module.exports.deleteTrake = catchAsyncError(async (req, res, next) => {
-//     const { id } = req.params
-//     let Trake = await trakeModel.findByIdAndDelete(id);
-//     if (!Trake) {
-//         return next(new AppError(`Trake Not Found`, 404))
-//     }
-//     res.json({ message: 'deleted Trake', data: Trake })
-// })
-// module.exports.deleteTrake = catchAsyncError(async (req, res, next) => {
+// export const deleteTrake = asynchandlier(async (req, res, next) => {
 //     const { id } = req.params;
-
 //     try {
-//         // Find the Trake by ID
 //         let Trake = await trakeModel.findById(id);
-
-//         // Check if the Trake exists
 //         if (!Trake) {
-//             return next(new AppError(`Trake Not Found`, 404));
+//             return next(new Error(`Trake Not Found`, 404));
 //         }
-
-//         // Delete the image from Cloudinary
 //         if (Trake.image) {
 //             const publicId = Trake.image.split('/').pop().split('.')[0];
-//             await cloudinary.uploader.destroy(publicId);
+//             await cloudinary.v2.uploader.destroy(publicId);
 //         }
-
-//         // Delete the Trake from the database
 //         await trakeModel.findByIdAndDelete(id);
-
-//         res.json({ message: 'Trake Deleted', data: Trake });
+//         res.json({ message: 'deleted Trake', data: Trake });
 //     } catch (error) {
-//         next(new AppError('Error deleting Trake', 500));
+//         next(new Error('Error deleting Trake', 500));
 //     }
 // });

@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import { asynchandlier } from '../../../services/erroeHandling.js';
 import UserModel from '../../../../DB/model/user.model.js';
 import { sendEmail } from '../../../services/email.js';
+import { selectModel } from '../../../middleware/auth.js';
 
 
 
@@ -30,25 +31,49 @@ export const signup = asynchandlier(async (req, res, next) => {
 
 // signin ............................>>>
 
-export const signin = asynchandlier(async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
-        const user = await UserModel.findOne({ email });
-        if (user) {
-            const match = await bcrypt.compareSync(password, user.password);
-            if (match) {
-                const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
-                return res.json({ message: "Success Signin", data: user, token });
-            } else {
-                return res.json({ message: 'Incorrect password' });
-            }
-        } else {
-            return res.json({ message: 'E-mail Not Registered' });
+// export const signin = asynchandlier(async (req, res, next) => {
+//     try {
+//         const { email, password } = req.body;
+//         const user = await UserModel.findOne({ email });
+//         if (user) {
+//             const match = await bcrypt.compareSync(password, user.password);
+//             if (match) {
+//                 const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
+//                 return res.json({ message: "Success Signin", data: user, token });
+//             } else {
+//                 return res.json({ message: 'Incorrect password' });
+//             }
+//         } else {
+//             return res.json({ message: 'E-mail Not Registered' });
+//         }
+//     } catch (error) {
+//         console.log("catch error",error);
+//         return next(new Error("catch error _ fail to signin", { cause: 500 }))
+//     }
+// })
+
+
+export const signin= asynchandlier(async (req, res) => {
+        const { email, password, role } = req.body;
+        const userCollection = selectModel(role);
+        console.log(userCollection);
+        if (!userCollection) {
+            return res.status(400).json({ error: 'Invalid role' });
         }
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch error _ fail to signin", { cause: 500 }))
-    }
+
+        const user = await userCollection.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
+        return res.json({ message: "Success Signin", data: user, token });
+       
+   
 })
 
 

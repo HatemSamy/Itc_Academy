@@ -10,13 +10,16 @@ const lectureSchema = new mongoose.Schema({
     video: String,
     pdf: String,
     audio: String,
-    serviceId: {
+    CourseId: {
         type: mongoose.Types.ObjectId,
-        ref: "service"
+        ref: "Course"
+    },
+    CreatedBy: {
+        type: mongoose.Types.ObjectId,
+        ref: "Instructor"
     },
     lectureLink: String,
     labNo: String,
-    academicName: String,
     hours: Number,
     objectives: [String]
 }, { timestamps: true });

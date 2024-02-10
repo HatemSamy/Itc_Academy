@@ -28,6 +28,9 @@ app.use(`${baseUrl}/auth`, indexRouter.authRouter)
 app.use(`${baseUrl}/category`, indexRouter.categoryRouter)
 app.use(`${baseUrl}/Service`, indexRouter.ServiceRouter)
 app.use(`${baseUrl}/lecture`, indexRouter.LectureRouter)
+app.use(`${baseUrl}/Course`, indexRouter.CourseRouter)
+app.use(`${baseUrl}/Instructor`, indexRouter.InstructorRouter)
+
 
 
 app.use('*', (req, res, next) => {

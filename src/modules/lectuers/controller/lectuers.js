@@ -3,52 +3,50 @@ import fs from 'fs';
 import LectureModel from "../../../../DB/model/lectuers.model.js";
 import ServiceModel from "../../../../DB/model/services.model.js";
 import { asynchandlier } from "../../../services/erroeHandling.js";
+import CourseModel from '../../../../DB/model/course.model.js';
 
 
+
+
+
+// endpoint to createLectureWithFiles ..........
 
 export const createLectureWithFiles = asynchandlier(async (req, res, next) => {
-    const { serviceId } = req.params;
+    const { courseId } = req.params;
     try {
-        // Check if the service exists
-        const service = await ServiceModel.findById(serviceId);
-        if (!service) {
-            return res.status(404).json({ message: 'Service not found' });
+        // Check if the course exists
+        const course = await CourseModel.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
         }
-
-        // Extract lecture data from the request body
-        const { name, description, labNo, academicName, hours, objectives } = req.body;
-        
         // Get file paths from the request object
         const videoPath = req.files['video'] ? req.files['video'][0].path : null;
         const audioPath = req.files['audio'] ? req.files['audio'][0].path : null;
         const pdfPath = req.files['pdf'] ? req.files['pdf'][0].path : null;
 
-        // Create a new lecture document with file paths
+        const lectureData = {
+            ...req.body,
+            videoPath,
+            audioPath,
+            pdfPath
+        };
         const newLecture = new LectureModel({
-            name,
-            description,
-            video: videoPath,
-            audio: audioPath,
-            pdf: pdfPath,
-            serviceId,
-            labNo,
-            academicName,
-            hours,
-            objectives
+            ...lectureData,
+            CourseId: courseId,
+            CreatedBy: req.user._id
         });
-
-        // Save the new lecture to the database
         const createdLecture = await newLecture.save();
 
-        // Return the newly created lecture as a response
+        course.lectureIds.push(createdLecture._id);
+        await course.save();
         res.status(201).json({ message: 'Lecture created successfully', data: createdLecture });
     } catch (error) {
         console.error('Error creating lecture:', error);
-        return next(new Error("Internal server error_Error creating lecture", { cause: 500 }))
+        return next(new Error("Internal server error_Error creating lecture", { cause: 500 }));
     }
-})
+});
 
-// *****************************************************
+// endpoint to getAllLecturers ..........
 
 export const getAllLecturers = async (req, res) => {
     try {
@@ -60,7 +58,7 @@ export const getAllLecturers = async (req, res) => {
     }
 };
 
- //*****************************************************
+ // endpoint to getSpecificLecturer ..........
 
 export const getSpecificLecturer = async (req, res, next) => {
     try {
@@ -76,8 +74,8 @@ export const getSpecificLecturer = async (req, res, next) => {
     }
 };
 
- //*****************************************************
- 
+ // endpoint to deleteOldFile ..........
+
 const deleteOldFile = async (filePath) => {
     try {
         if (fs.existsSync(filePath)) {
@@ -93,7 +91,8 @@ const deleteOldFile = async (filePath) => {
     }
 };
 
- //*****************************************************
+// endpoint to updateLecture ..........
+
 export const updateLecture = asynchandlier(async (req, res, next) => {
     const { lectureId } = req.params;
     try {
@@ -142,9 +141,9 @@ export const updateLecture = asynchandlier(async (req, res, next) => {
     }
 });
 
- //*****************************************************
-
-export const deleteLecture = asynchandlier(async (req, res, next) => {
+ // endpoint to deleteLecture ..........
+ 
+ export const deleteLecture = asynchandlier(async (req, res, next) => {
     const { lectureId } = req.params;
     try {
         // Check if the lecture exists
@@ -152,6 +151,9 @@ export const deleteLecture = asynchandlier(async (req, res, next) => {
         if (!lecture) {
             return res.status(404).json({ message: 'Lecture not found' });
         }
+
+        // Find the course to which the lecture belongs
+        const course = await CourseModel.findOne({ lectureIds: lectureId });
 
         // Delete lecture files if they exist
         if (lecture.video) {
@@ -167,10 +169,17 @@ export const deleteLecture = asynchandlier(async (req, res, next) => {
         // Delete the lecture document from the database
         await LectureModel.findByIdAndDelete(lectureId);
 
+        // If course is found, remove the lecture's ID from course lectureIds array
+        if (course) {
+            course.lectureIds.pull(lectureId);
+            await course.save();
+        }
+
         res.status(200).json({ message: 'Lecture deleted successfully' });
     } catch (error) {
         console.error('Error deleting lecture:', error);
-        return next(new Error("Internal server error", { cause: 500 }))
+        return next(new Error("Internal server error", { cause: 500 }));
     }
 });
+
 

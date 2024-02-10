@@ -7,7 +7,7 @@ import { AccessRoles, authentication } from '../../middleware/auth.js';
 const router = Router();
 
 // POST /create - Create a new lecture
-router.post('/create/:serviceId',authentication(AccessRoles.MultipleRole),myMulter(pathName.lectureFiles).fields([
+router.post('/create/:courseId',authentication(AccessRoles.instructorRole),myMulter(pathName.lectureFiles).fields([
     { name: 'video', maxCount: 1 },
     { name: 'audio', maxCount: 1 },
     { name: 'pdf', maxCount: 1 }
@@ -27,6 +27,6 @@ router.put('/:lectureId', myMulter(pathName.lectureFiles).fields([
 ]), HME, lectureController.updateLecture);
 
 // DELETE /:id - Delete a lecture
-router.delete('/:lectureId',authentication(AccessRoles.MultipleRole),lectureController.deleteLecture);
+router.delete('/:lectureId',authentication(AccessRoles.instructorRole),lectureController.deleteLecture);
 
 export default router;

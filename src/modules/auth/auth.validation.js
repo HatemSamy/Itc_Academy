@@ -21,13 +21,14 @@ export const AdminRegister = {
         Name: joi.string().required(),
         email: joi.string().required().email(),
         password: joi.string().required(),
-
+       
     })
 }
 export const login = {
     body: joi.object().required().keys({
         email: joi.string().required().email(),
         password: joi.string().required(),
+        role: joi.string().required(),
 
     })
 }
