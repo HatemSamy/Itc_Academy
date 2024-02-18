@@ -2,9 +2,10 @@
 import { HME, myMulter, pathName } from "../../services/multer.js";
 import * as CourseController from "./controller/course.js"
 import { AccessRoles, authentication } from "../../middleware/auth.js";
+import ExamRouter from "../Eaxm/Exam.Router.js"
  const router= Router()
 
-
+router.use("/:CourseId/exam",ExamRouter)  // internal navigate
  router.post('/:serviceId',authentication(AccessRoles.instructorRole),myMulter(pathName.Course).single('image'),HME,CourseController.CreateCourse )
  router.put('/:id',authentication(AccessRoles.instructorRole), myMulter(pathName.Course).single('image'),HME,CourseController.UpdateCourse )
  router.get('/',CourseController.getCourses )

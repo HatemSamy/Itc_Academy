@@ -63,7 +63,7 @@ export const signin= asynchandlier(async (req, res) => {
 
         const user = await userCollection.findOne({ email });
         if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ error: 'Invalid email' });
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {

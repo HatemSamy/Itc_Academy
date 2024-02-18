@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'Admin'],
         default: "user"
     },
+    examResults: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"ExamResult"
+    }],
+        
     enrolled_courses: [
         {
             type: mongoose.Schema.Types.ObjectId,

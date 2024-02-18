@@ -13,6 +13,12 @@ const instructorSchema = new Schema({
     imageUrl:{
       type: String,
   },
+
+  exams: [{
+    type: Schema.Types.ObjectId,
+    ref: "Exam",
+
+}],
  
     email: {
       type: String,

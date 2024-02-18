@@ -30,6 +30,9 @@ app.use(`${baseUrl}/Service`, indexRouter.ServiceRouter)
 app.use(`${baseUrl}/lecture`, indexRouter.LectureRouter)
 app.use(`${baseUrl}/Course`, indexRouter.CourseRouter)
 app.use(`${baseUrl}/Instructor`, indexRouter.InstructorRouter)
+app.use(`${baseUrl}/Question`, indexRouter.QuestionRouter)
+
+
 
 
 

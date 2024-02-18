@@ -17,7 +17,7 @@ export const AccessRoles = {
 
     Admin: [Roles.Admin],
     userrole: [Roles.User],
-    MultipleRole: [Roles.Admin, Roles.User],
+    MultipleRole: [Roles.instructor, Roles.User],
     instructorRole:[Roles.instructor]
 
 }
@@ -28,7 +28,7 @@ export const AccessRoles = {
 export const selectModel = (role) => {
     let userCollection;
 
-    if (role === 'user') {
+    if (role === 'user' || role === 'Admin' ) {
         userCollection = UserModel;
     } else if (role === 'instructor') {
         userCollection = InstructorModel;
@@ -109,12 +109,13 @@ export const authentication = (accessRole) => {
             } else {
                 user = await UserModel.findById(decoded.userId);
             }
+            console.log(user);
 
             if (!user) {
                 throw new Error('User not found');
             }
 
-            if (!accessRole.includes(userRole)) {
+            if (!accessRole.includes(user.role)) {
                return res.status(400).json({message:"access Denied, not authraized role"})
             }
             req.user = user;

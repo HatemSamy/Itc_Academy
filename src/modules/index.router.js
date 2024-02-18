@@ -5,6 +5,10 @@ import ServiceRouter from './services/services.router.js'
 import LectureRouter from './lectuers/lectuers.router.js'
 import CourseRouter from './course/course.router.js'
 import InstructorRouter from './instructor/instructor.router.js'
+import ExamRouter from './Eaxm/Exam.Router.js'
+import QuestionRouter from './Qesustion/Questions.Router.js'
+
+
 
 
 
@@ -21,5 +25,7 @@ export {
     CourseRouter,
     LectureRouter,
     ServiceRouter,
-    InstructorRouter
+    InstructorRouter,
+    ExamRouter,
+    QuestionRouter
 }
