@@ -7,6 +7,10 @@ import CourseRouter from './course/course.router.js'
 import InstructorRouter from './instructor/instructor.router.js'
 import ExamRouter from './Eaxm/Exam.Router.js'
 import QuestionRouter from './Qesustion/Questions.Router.js'
+import  GroupRouter from './group/group.router.js'
+import  AbsenceRouter from './Absence/Absence.router.js'
+
+
 
 
 
@@ -27,5 +31,7 @@ export {
     ServiceRouter,
     InstructorRouter,
     ExamRouter,
-    QuestionRouter
+    QuestionRouter,
+    GroupRouter,
+    AbsenceRouter
 }

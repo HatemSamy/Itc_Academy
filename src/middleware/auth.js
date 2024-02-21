@@ -109,8 +109,7 @@ export const authentication = (accessRole) => {
             } else {
                 user = await UserModel.findById(decoded.userId);
             }
-            console.log(user);
-
+        
             if (!user) {
                 throw new Error('User not found');
             }

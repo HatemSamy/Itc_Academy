@@ -1,0 +1,32 @@
+import express from 'express';
+import * as GroupController from "../group/controller/group.js"
+import { AccessRoles, authentication } from '../../middleware/auth.js';
+
+const router = express.Router();
+
+router.post('/',authentication(AccessRoles.Admin),GroupController.createGroup);
+
+router.post('/:groupId',authentication(AccessRoles.Admin),GroupController.addStudentsToGroup);
+
+router.post('/:groupId/materials',authentication(AccessRoles.Admin),GroupController.addMaterialsToGroup);
+
+router.put('/:groupId',authentication(AccessRoles.Admin),GroupController.updateGroup);
+
+router.get('/',authentication(AccessRoles.Admin),GroupController.getGroups);
+// get group by id 
+router.get('/:groupId',authentication(AccessRoles.Admin),GroupController.getGroupById);
+// delete student from group
+router.delete('/students/:groupId',authentication(AccessRoles.Admin),GroupController.deleteStudentFromGroup);
+// delete material from group
+router.delete('/Material/:groupId',authentication(AccessRoles.Admin),GroupController.deleteMaterialFromGroup);
+// delete group
+router.delete('/:groupId',authentication(AccessRoles.Admin),GroupController.deleteGroup);
+// get students in the group 
+router.get('/students/:groupId',authentication(AccessRoles.Admin),GroupController.getStudentsInGroup);
+// get material in group
+router.get('/Material/:groupId',authentication(AccessRoles.general),GroupController.getMaterialsByUserInGroup);
+
+
+
+
+export default router;

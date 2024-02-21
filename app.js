@@ -23,14 +23,16 @@ app.use(cors({}))
 
 //Setup API Routing 
 app.use(`${baseUrl}/auth`, indexRouter.authRouter)
-// app.use(`${baseUrl}/user`, indexRouter.userRouter)
-// app.use(`${baseUrl}/Lecture`, indexRouter.LectureRouter)
 app.use(`${baseUrl}/category`, indexRouter.categoryRouter)
 app.use(`${baseUrl}/Service`, indexRouter.ServiceRouter)
 app.use(`${baseUrl}/lecture`, indexRouter.LectureRouter)
 app.use(`${baseUrl}/Course`, indexRouter.CourseRouter)
 app.use(`${baseUrl}/Instructor`, indexRouter.InstructorRouter)
 app.use(`${baseUrl}/Question`, indexRouter.QuestionRouter)
+app.use(`${baseUrl}/group`, indexRouter.GroupRouter)
+app.use(`${baseUrl}/Absence`, indexRouter.AbsenceRouter)
+
+
 
 
 
