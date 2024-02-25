@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/create/:categoryId',myMulter(pathName.serviceFiles).single("image"),HME,ServiceController.createService);
 router.get('/services/:categoryId', ServiceController.getAllServices);
-router.get('/:id',authentication(AccessRoles.MultipleRole) ,ServiceController.getSpecificService);
+router.get('/:id',ServiceController.getSpecificService);
 router.put('/:id', myMulter(pathName.serviceFiles).single("image"),HME,ServiceController.updateService);
 router.delete('/:id',authentication(AccessRoles.MultipleRole),ServiceController.deleteService);
 
