@@ -1,8 +1,12 @@
 import express from 'express';
 import * as GroupController from "../group/controller/group.js"
 import { AccessRoles, authentication } from '../../middleware/auth.js';
-
+import SessionRouter from "../Session/Session.router.js"
 const router = express.Router();
+
+
+
+router.use("/:groupId/Session",SessionRouter)  // internal navigate
 
 router.post('/',authentication(AccessRoles.Admin),GroupController.createGroup);
 

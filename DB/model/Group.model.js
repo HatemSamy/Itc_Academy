@@ -22,7 +22,12 @@ const groupSchema = new mongoose.Schema({
   materials: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course' 
-  }]
+  }],
+
+  Sessions:[ {  
+    type: mongoose.Types.ObjectId,
+    ref:"Session",
+  }],
 },{ timestamps: true });
 
 const GroupModel = mongoose.model('Group', groupSchema);

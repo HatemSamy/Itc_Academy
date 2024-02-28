@@ -14,10 +14,10 @@ export const Roles = {
 export const AccessRoles = {
     create: [Roles.Admin],
     general: [Roles.Admin,Roles.User,Roles.instructor],
-
     Admin: [Roles.Admin],
     userrole: [Roles.User],
-    MultipleRole: [Roles.instructor, Roles.User],
+    MultipleRole: [Roles.instructor, Roles.User ,Roles.Admin],
+    DoupleRole: [Roles.instructor,Roles.Admin],
     instructorRole:[Roles.instructor]
 
 }
