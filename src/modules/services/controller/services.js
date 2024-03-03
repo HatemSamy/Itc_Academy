@@ -6,7 +6,6 @@ import fs from 'fs';
 
 // Create a service
 export const createService = asynchandlier(async (req, res, next) => {
-    try {
         const {categoryId}= req.params
         if (req.file && req.file.path) {
             const categoryFound = await CategoryModel.findById(categoryId);
@@ -23,15 +22,10 @@ export const createService = asynchandlier(async (req, res, next) => {
         } else {
             return res.status(400).json({ error: 'File path not provided' });
         }
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch_error", { cause: 500 }))
-    }
 });
 
 //Get all services
 export const getAllServices = asynchandlier(async (req, res, next) => {
-    try {
        
         if (req.params.categoryId) {
             const categoryFound = await CategoryModel.findById(req.params.categoryId);
@@ -41,17 +35,13 @@ export const getAllServices = asynchandlier(async (req, res, next) => {
             const services = await ServiceModel.find({categoryId:req.params.categoryId});
             res.json({ message: `This is All Services in category:${categoryFound.name}`, data: services });
         }
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch_error", { cause: 500 }))
-    }
+  
 });
 
 // Update a service
 export const updateService = asynchandlier(async (req, res, next) => {
     const { id } = req.params;
 
-    try {
         const oldService = await ServiceModel.findById(id);
 
         if (req.file) {
@@ -75,32 +65,22 @@ export const updateService = asynchandlier(async (req, res, next) => {
         if (!updatedService) {
             next (new Error(`Service Not Found`, 404));
         }
-
         res.json({ message: 'Updated Service', data: updatedService });
-    } catch (error) {
-        console.log("Error updating service",error);
-        return next(new Error("catch_error", { cause: 500 }))
-    }
 });
 
 // Get a specific service
 export const getSpecificService = asynchandlier(async (req, res, next) => {
-    try {
         const { id } = req.params;
         const service = await ServiceModel.findById(id);
         if (!service) {
             return next(new Error(`Service Not Found`, 404));
         }
         res.json({ message: 'Success', data: service });
-    } catch (error) {
-       console.log("catch error",error);
-       return next(new Error("catch_error", { cause: 500 }))
-    }
 });
 
 // // Delete a service
 export const deleteService = asynchandlier(async (req, res, next) => {
-    try {
+
         const { id } = req.params;
         const service = await ServiceModel.findById(id);
         if (!service) {
@@ -116,7 +96,5 @@ export const deleteService = asynchandlier(async (req, res, next) => {
         }
         await ServiceModel.findByIdAndDelete(id);
         res.json({ message: 'Service Deleted', data: service });
-    } catch (error) {
-        return next(new Error("Internal server error", { cause: 500 }))
-    }
+    
 });

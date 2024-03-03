@@ -10,7 +10,6 @@ import { Error } from 'mongoose';
 
 // Create categories
 export const createCategory = asynchandlier(async (req, res) => {
-    try {
         if (req.file && req.file.path) {
             const image = req.file;
             const newImageUrl = image ? image.path : '';
@@ -24,10 +23,6 @@ export const createCategory = asynchandlier(async (req, res) => {
         } else {
             return res.status(400).json({ error: 'image is required' });
         }
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch error_fail to CreateCategory", { cause: 500 }))
-    }
 });
 
 // Get all categories
@@ -50,7 +45,6 @@ export const getSpecificCategory = asynchandlier(async (req, res,next) => {
 export const updateCategory = asynchandlier( async (req, res, next) => {
     const { id } = req.params;
 
-    try {
         const oldCategory = await CategoryModel.findById(id);
 
         if (req.file) {
@@ -71,47 +65,30 @@ export const updateCategory = asynchandlier( async (req, res, next) => {
             }
         }
 
-        const updatedCategory = await CategoryModel.findByIdAndUpdate(id, req.body, { new: true });
+        const updatedCategory = await CategoryModel.findByIdAndUpdate(id, { $set:{ ...req.body} }, { new: true });
 
         if (!updatedCategory) {
             throw new Error(`Category Not Found`);
         }
 
         res.json({ message: 'Updated Category', data: updatedCategory });
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch error_", { cause: 500 }))
-    }
 })
 
 
 // Delete category by ID
 export const deleteCategory = asynchandlier(async (req, res, next) => {
     const { id } = req.params;
-
-    try {
-        // Find the category by ID
         let category = await CategoryModel.findById(id);
-
-        // Check if the category exists
         if (!category) {
             return next(new Error(`Category Not Found`, 404));
         }
-
-        // Delete the image from Cloudinary
         if (category.image) {
             if (fs.existsSync(category.image)) {
                 await fs.promises.unlink(category.image);
                 console.log('Old Image Deleted Successfully');
             }
         }
-
-        // Delete the category from the database
         await CategoryModel.findByIdAndDelete(id);
 
         res.json({ message: 'Category Deleted', data: category });
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch error_Error deleting category", { cause: 500 }))
-    }
 });
