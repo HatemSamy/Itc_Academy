@@ -92,3 +92,30 @@ export const deleteCategory = asynchandlier(async (req, res, next) => {
 
         res.json({ message: 'Category Deleted', data: category });
 });
+
+
+
+export const recommendedCategory= asynchandlier(async (req, res) => {
+
+    const { categoryId } = req.params;
+    const { recommended } = req.body;
+    if (recommended) {
+        const recommendedCategoriesCount = await CategoryModel.countDocuments({ recommended: true });
+
+        if (recommendedCategoriesCount >= 4) {
+            return res.status(400).json({ message: 'Only four recommended categories are allowed' });
+        }
+    }
+
+    const updatedCategory = await CategoryModel.findByIdAndUpdate(
+        categoryId,
+        { recommended },
+        { new: true }
+    );
+
+    if (!updatedCategory) {
+        return res.status(404).json({ message: 'Category not found' });
+    }
+    return res.json({ message: 'Recommended status updated successfully', data: updatedCategory });
+});
+

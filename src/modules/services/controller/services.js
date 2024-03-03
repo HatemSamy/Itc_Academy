@@ -98,3 +98,30 @@ export const deleteService = asynchandlier(async (req, res, next) => {
         res.json({ message: 'Service Deleted', data: service });
     
 });
+
+
+
+export const setRecommendedStatusForService = asynchandlier(async (req, res) => {
+        const { serviceId } = req.params;
+        const { recommended } = req.body;
+        if (recommended) {
+            const recommendedServicesCount = await ServiceModel.countDocuments({ recommended: true });
+
+            if (recommendedServicesCount >= 6) {
+                return res.status(400).json({ message: 'Only six recommended services are allowed' });
+            }
+        }
+
+        const updatedService = await ServiceModel.findByIdAndUpdate(
+            serviceId,
+            { recommended },
+            { new: true }
+        );
+
+        if (!updatedService) {
+            return res.status(404).json({ message: 'Service not found' });
+        }
+
+        return res.json({ message: 'Recommended status updated successfully', data: updatedService });
+    }
+)

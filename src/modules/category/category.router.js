@@ -12,5 +12,7 @@ router.get('/',categoryController.getAllCategories);
 router.get('/:id',categoryController.getSpecificCategory);
 router.put('/:id', myMulter(pathName.CreateCategory).single('image'),HME,categoryController.updateCategory);
 router.delete('/:id',authentication(AccessRoles.create),categoryController.deleteCategory);
+router.put('/recommended/:categoryId',categoryController.recommendedCategory);
+
 
 export default router;

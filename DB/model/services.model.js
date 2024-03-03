@@ -11,6 +11,10 @@ const serviceSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "category"
     },
+    recommended: {
+        type: Boolean,
+        default: false
+    },
     image: String,
     imageUrl:String,
     typeOfService: {

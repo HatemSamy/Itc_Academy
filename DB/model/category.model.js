@@ -9,6 +9,10 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    recommended: {
+        type: Boolean,
+        default: false
+    },
     image: String,
     imageId: String
 
