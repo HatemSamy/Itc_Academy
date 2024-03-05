@@ -5,6 +5,7 @@ import fs from 'fs';
 import { pathName } from '../../../services/multer.js';
 import path from 'path';
 import { Error } from 'mongoose';
+import ServiceModel from '../../../../DB/model/services.model.js';
 
 
 
@@ -27,7 +28,7 @@ export const createCategory = asynchandlier(async (req, res) => {
 
 // Get all categories
 export const getAllCategories = asynchandlier(async (req, res) => {
-    const Categories = await CategoryModel.find({});
+    const Categories = await CategoryModel.find({recommended: true });
     res.json({ message: 'All Categories', data: Categories });
 });
 
@@ -94,7 +95,7 @@ export const deleteCategory = asynchandlier(async (req, res, next) => {
 });
 
 
-
+// Get recommended Category
 export const recommendedCategory= asynchandlier(async (req, res) => {
 
     const { categoryId } = req.params;
@@ -119,3 +120,18 @@ export const recommendedCategory= asynchandlier(async (req, res) => {
     return res.json({ message: 'Recommended status updated successfully', data: updatedCategory });
 });
 
+
+// Get recommendedItems
+export const recommendedItemsHandler = asynchandlier(async (req, res) => {
+   
+        const  recommendedCategories = await CategoryModel.find({recommended: true });
+
+        const recommendedServices = await ServiceModel.find({ recommended: true });
+        const recommendedItems = [
+            ...recommendedCategories.map(category => ({ type: 'category', data: category })),
+            ...recommendedServices.map(service => ({ type: 'service', data: service }))
+        ];
+
+        return res.json({ message: 'Recommended items retrieved successfully', data: recommendedItems });
+    
+});

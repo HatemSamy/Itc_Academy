@@ -20,7 +20,7 @@ export const createService = asynchandlier(async (req, res, next) => {
             await service.save();
             return res.status(200).json({ message: 'Success', data: service });
         } else {
-            return res.status(400).json({ error: 'File path not provided' });
+            return res.status(400).json({ error: 'image not provided' });
         }
 });
 

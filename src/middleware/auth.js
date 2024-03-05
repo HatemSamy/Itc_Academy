@@ -89,7 +89,8 @@ export const authentication = (accessRole) => {
             const { authorization } = req.headers;
             
             if (!authorization?.startsWith(process.env.BearerKey)) {
-                throw new Error('Invalid bearer key');
+                return res.status(404).json({message:"Invalid bearer key"})
+
             }
 
             const token = authorization.split(process.env.BearerKey)[1];
@@ -99,23 +100,25 @@ export const authentication = (accessRole) => {
             const userRole = decoded.role;
 
             if (!userRole) {
-                throw new Error('Invalid token payload: role not found');
+                return res.status(404).json({message:"Invalid token payload: role not found"})
+
             }
 
             // Check if the user exists in the database based on the role
             let user;
             if (userRole === 'instructor') {
-                user = await InstructorModel.findById(decoded.userId);
+                user = await InstructorModel.findById(decoded.userId)
             } else {
                 user = await UserModel.findById(decoded.userId);
             }
         
-            if (!user) {
-                throw new Error('User not found');
+            if (!user || user===null) {
+                return res.status(404).json({message:"Logged user not found"})
+             
             }
 
             if (!accessRole.includes(user.role)) {
-               return res.status(400).json({message:"access Denied, not authraized role"})
+               return res.status(400).json({message:"access Denied , not authraized role"})
             }
             req.user = user;
             next();
