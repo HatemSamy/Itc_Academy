@@ -28,7 +28,7 @@ export const createCategory = asynchandlier(async (req, res) => {
 
 // Get all categories
 export const getAllCategories = asynchandlier(async (req, res) => {
-    const Categories = await CategoryModel.find({recommended: true });
+    const Categories = await CategoryModel.find({});
     res.json({ message: 'All Categories', data: Categories });
 });
 

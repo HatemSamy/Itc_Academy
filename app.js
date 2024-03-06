@@ -31,6 +31,8 @@ app.use(`${baseUrl}/Instructor`, indexRouter.InstructorRouter)
 app.use(`${baseUrl}/Question`, indexRouter.QuestionRouter)
 app.use(`${baseUrl}/group`, indexRouter.GroupRouter)
 app.use(`${baseUrl}/Absence`, indexRouter.AbsenceRouter)
+// app.use(`${baseUrl}/meeting`, indexRouter.MeetingRouter)
+
 
 
 

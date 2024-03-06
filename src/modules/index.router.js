@@ -9,6 +9,8 @@ import ExamRouter from './Eaxm/Exam.Router.js'
 import QuestionRouter from './Qesustion/Questions.Router.js'
 import  GroupRouter from './group/group.router.js'
 import  AbsenceRouter from './Absence/Absence.router.js'
+// import  MeetingRouter from './meetIntegration/meeting.router.js'
+
 
 
 
@@ -33,5 +35,6 @@ export {
     ExamRouter,
     QuestionRouter,
     GroupRouter,
-    AbsenceRouter
+    AbsenceRouter,
+    // MeetingRouter,
 }
