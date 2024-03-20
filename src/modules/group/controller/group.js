@@ -1,6 +1,6 @@
 
 import GroupModel from '../../../../DB/model/Group.model.js';
-import InstructorModel from '../../../../DB/model/Instructor.model.js';
+
 import CourseModel from '../../../../DB/model/course.model.js';
 import UserModel from '../../../../DB/model/user.model.js';
 import { asynchandlier } from "../../../services/erroeHandling.js";
@@ -8,19 +8,14 @@ import { asynchandlier } from "../../../services/erroeHandling.js";
 
   export const createGroup = asynchandlier(async (req, res, next) => {
 
-      // Check if the instructor exists
-      const instructor = await InstructorModel.findById(req.body.instructor);
+      const instructor = await UserModel.findById(req.body.instructor);
       if (!instructor) {
         return res.status(400).json({ error: 'Instructor not found' });
       }
-  
-      // Check if a group with the provided code already exists
       const existingGroup = await GroupModel.findOne({ code: req.body.code });
       if (existingGroup) {
         return next (new Error(`Group with this code ${req.body.code} already exists`));
       }
-  
-      // Create the group if all checks pass
       const groupData = {
         code: req.body.code ,
         name: req.body.name,
@@ -195,8 +190,6 @@ export const getStudentsInGroup = asynchandlier(async (req, res, next) => {
 
     res.status(200).json({ data: group.students });
 });
-
-
 
 
 

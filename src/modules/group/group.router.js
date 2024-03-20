@@ -7,15 +7,15 @@ const router = express.Router();
 
 
 router.use("/:groupId/Session",SessionRouter)  // internal navigate
-
+// Create group
 router.post('/',authentication(AccessRoles.Admin),GroupController.createGroup);
-
+// Add students to the group
 router.post('/:groupId',authentication(AccessRoles.Admin),GroupController.addStudentsToGroup);
-
+// Add Materials to the group
 router.post('/:groupId/materials',authentication(AccessRoles.Admin),GroupController.addMaterialsToGroup);
-
+// Update group
 router.put('/:groupId',authentication(AccessRoles.Admin),GroupController.updateGroup);
-
+// get all groups
 router.get('/',authentication(AccessRoles.Admin),GroupController.getGroups);
 // get group by id 
 router.get('/:groupId',authentication(AccessRoles.Admin),GroupController.getGroupById);
@@ -29,7 +29,6 @@ router.delete('/:groupId',authentication(AccessRoles.Admin),GroupController.dele
 router.get('/students/:groupId',authentication(AccessRoles.Admin),GroupController.getStudentsInGroup);
 // get material in group
 router.get('/Material/:groupId',authentication(AccessRoles.general),GroupController.getMaterialsByUserInGroup);
-
 
 
 

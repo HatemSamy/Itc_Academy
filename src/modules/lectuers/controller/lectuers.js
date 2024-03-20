@@ -14,12 +14,10 @@ import CourseModel from '../../../../DB/model/course.model.js';
 export const createLectureWithFiles = asynchandlier(async (req, res, next) => {
     const { courseId } = req.params;
     try {
-        // Check if the course exists
         const course = await CourseModel.findById(courseId);
         if (!course) {
             return res.status(404).json({ message: 'Course not found' });
         }
-        // Get file paths from the request object
         const videoPath = req.files['video'] ? req.files['video'][0].path : null;
         const audioPath = req.files['audio'] ? req.files['audio'][0].path : null;
         const pdfPath = req.files['pdf'] ? req.files['pdf'][0].path : null;
@@ -96,13 +94,10 @@ const deleteOldFile = async (filePath) => {
 export const updateLecture = asynchandlier(async (req, res, next) => {
     const { lectureId } = req.params;
     try {
-        // Check if the lecture exists
         let lecture = await LectureModel.findById(lectureId);
         if (!lecture) {
             return res.status(404).json({ message: 'Lecture not found' });
         }
-
-        // Update file paths if new files are provided
         if (req.files) {
             const videoFile = req.files['video'] ? req.files['video'][0] : null;
             const audioFile = req.files['audio'] ? req.files['audio'][0] : null;
@@ -127,13 +122,9 @@ export const updateLecture = asynchandlier(async (req, res, next) => {
             }
         }
 
-        // Update other lecture fields
         Object.assign(lecture, req.body);
 
-        // Save the updated lecture to the database
         const updatedLecture = await lecture.save();
-
-        // Return the updated lecture as a response
         res.status(200).json({ message: 'Lecture updated successfully', data: updatedLecture });
     } catch (error) {
         console.error('Error updating lecture', error);

@@ -43,7 +43,6 @@ const course_imageUrl = req.file.path;
 
 });
 
-
 export const UpdateCourse=  asynchandlier (async (req, res, next) => {
   const { id } = req.params;
     const course = await CourseModel.findOne({_id:id,CreatedBy:req.user._id});

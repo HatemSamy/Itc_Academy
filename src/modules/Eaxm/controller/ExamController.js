@@ -1,5 +1,4 @@
 
-import InstructorModel from "../../../../DB/model/Instructor.model.js"
 import { asynchandlier } from "../../../services/erroeHandling.js"
 import UserModel from "../../../../DB/model/user.model.js"
 import ExamModel from "../../../../DB/model/Exams.model.js"
@@ -8,7 +7,7 @@ import ExamResultModel from "../../../../DB/model/ExamResualt.model.js"
 export const CraetExam = asynchandlier(async (req, res, next) => {
 
     // check Teacher found
-    const Instructor= await InstructorModel.findById(req.user._id)
+    const Instructor= await UserModel.findById(req.user._id)
     if (!Instructor) {
         next(new Error("Instructor not found"))
     }else{
@@ -83,7 +82,7 @@ export const UpdateExam = asynchandlier(async (req, res, next) => {
 })
 
 
-export const WriteExam = asynchandlier(async (req, res, next) => {
+export const TakeExam = asynchandlier(async (req, res, next) => {
 
     //  student found
     const StudentFound = await UserModel.findOne({_id:req.user._id})

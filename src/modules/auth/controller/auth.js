@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import { asynchandlier } from '../../../services/erroeHandling.js';
 import UserModel from '../../../../DB/model/user.model.js';
 import { sendEmail } from '../../../services/email.js';
-import { selectModel } from '../../../middleware/auth.js';
+
 
 
 
@@ -12,68 +12,56 @@ import { selectModel } from '../../../middleware/auth.js';
 // signup ............................>>>
 
 export const signup = asynchandlier(async (req, res, next) => {
-    try {
-        const user = await UserModel.findOne({ email: req.body.email });
-        if (user) {
-            return next(new Error('E-mail Aleardy Exist', 409));
-        }
-        const HashPassword= await bcrypt.hashSync(req.body.password, parseInt(process.env.SALTROUND))
-        req.body.password=HashPassword
-        const newUser = new UserModel(req.body);
-        await newUser.save();
-        res.status(200).json({ message: 'Signup Success', data: newUser });
-    } catch (error) {
-        return next(new Error("catch error_ fail to Signup", { cause: 500 }))
+ 
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (user) {
+        return next(new Error('E-mail Aleardy Exist', 409));
+    }
+    const newUser = new UserModel(req.body);
+
+    const token = await jwt.sign({ id: newUser._id,role:newUser.role}, process.env.emailToken)
+    const link = `${req.protocol}://${req.headers.host}${process.env.BASEURL}/auth/confirmEmail/${token}`
+
+    const message = `<a href="${link}"> ConfirmEmail <a/>`
+
+    const info = await sendEmail(req.body.email, "confirmEmail", message)
+    if (info?.accepted?.length) {
+        const savedUser = await newUser.save()
+        return res.status(201).json({ massage: "Accouent Created successfully", userId: savedUser._id })
+
+    } else {
+        return next(new Error("email regicted"))
+
 
     }
+
 })
 
 
-// signin ............................>>>
-
-// export const signin = asynchandlier(async (req, res, next) => {
-//     try {
-//         const { email, password } = req.body;
-//         const user = await UserModel.findOne({ email });
-//         if (user) {
-//             const match = await bcrypt.compareSync(password, user.password);
-//             if (match) {
-//                 const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
-//                 return res.json({ message: "Success Signin", data: user, token });
-//             } else {
-//                 return res.json({ message: 'Incorrect password' });
-//             }
-//         } else {
-//             return res.json({ message: 'E-mail Not Registered' });
-//         }
-//     } catch (error) {
-//         console.log("catch error",error);
-//         return next(new Error("catch error _ fail to signin", { cause: 500 }))
-//     }
-// })
 
 
-export const signin= asynchandlier(async (req, res) => {
-        const { email, password, role } = req.body;
-        const userCollection = selectModel(role);
-        console.log(userCollection);
-        if (!userCollection) {
-            return res.status(400).json({ error: 'Invalid role' });
-        }
-
-        const user = await userCollection.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ error: 'Invalid email' });
-        }
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
-        return res.json({ message: "Success Signin", data: user, token });
-       
+export const signin = asynchandlier(async (req, res,next) => {
+    const { email, password} = req.body;
    
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        return next(new Error('E-mail not exist', 404));
+
+    }
+    if (!user.confirmEmail) {
+        return next(new Error('please Confirm your email frist',400));
+    }
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+        return next(new Error('Invalid credentials',400));
+
+    }
+
+    const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
+    return res.json({ message: "Success Signin", UserId: user._id, token });
+
+
 })
 
 
@@ -82,7 +70,6 @@ export const signin= asynchandlier(async (req, res) => {
 /// sendCode ............................>>>
 
 export const sendCode = asynchandlier(async (req, res, next) => {
-    try {
         const user = await UserModel.findOne({ email: req.body.email });
         if (!user) {
             return res.status(401).json({ message: "E-mail Not Exist" });
@@ -92,68 +79,54 @@ export const sendCode = asynchandlier(async (req, res, next) => {
         await user.save();
         sendEmail(user.email, `<h1> Access Code</h1>`, accessCode);
         res.json({ message: "Code Send Successfully" });
-    } catch (error) {
-        console.log("catch error",error);
-        return next(new Error("catch error_fail to sendcode", { cause: 500 }))
-    }
+  
 });
 
 
 
 
-// logout ............................>>>
 
-// export const logout = catchAsyncError(async (req, res, next) => {
-//     try {
-//         const authHeader = req.headers['token'];
-//         if (authHeader && authHeader.startsWith(process.env.BearerKey)) {
-//             const token = authHeader.split(process.env.BearerKey)[1];
-//             jwt.verify(token, 'SKEY', async (err, decoded) => {
-//                 if (err) {
-//                     return next(new AppError('Invalid or expired token. Logout failed.', 401));
-//                 }
-//                 await userModel.findByIdAndUpdate(decoded.userId, { token: '' });
-//                 res.clearCookie('token');
-//                 res.json({ message: 'Logged out successfully' });
-//             });
-//         } else {
-//             return next(new AppError('Token not provided. Logout failed.', 401));
-//         }
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+export const confirmEmail= asynchandlier(async(req,res,next)=>{
 
+    const {token} =req.params
+    
+    const decoded= await jwt.verify(token,process.env.emailToken)
+    if(!decoded ){
+      return  next (new (Error("invalid pay load or it is aready confirmed")))
+    
+    }else{
+    
+     const User= await UserModel.findOneAndUpdate({_id:decoded.id,confirmEmail:false},{confirmEmail:true})
+     console.log(User);
+      return res.status(200).json({message:"E-mail confirmed successfuly",UserId:User._id})
+    
 
+    }})
 
 // forgetPassword ............................>>>
-
-
 export const forgetPassword = async (req, res, next) => {
     const { email, code, password } = req.body;
-    const saltRounds = process.env.SALTROUND ? parseInt(process.env.SALTROUND) : 9;
-    console.log(saltRounds);
-    try {
+
         const user = await UserModel.findOne({ email, code });
 
         if (!user) {
             return res.status(401).json({ message: "User does not exist or invalid code" });
         }
-
-        const hashpassword = bcrypt.hashSync(password , saltRounds)
-
+        const HashPassword = await bcrypt.hash(password,parseInt(process.env.SALTROUND))
         const updateUser = await UserModel.findOneAndUpdate(
             { email },
-            { code: '', password: hashpassword },
+            { code: '', password:HashPassword},
             { new: true }
         );
-
-        if (!updateUser) {
-            throw new Error("Failed to reset password");
+        if (updateUser) {
+            return res.status(401).json({ message: "Password reset successfully",updateUser});
+            
+        }else {
+            return  next (new Error("Failed to reset password"));
         }
 
-        return res.json({ message: "Password updated successfully", updateUser });
-    } catch (error) {
-        return next(error); 
-    }
 };
+
+
+
+

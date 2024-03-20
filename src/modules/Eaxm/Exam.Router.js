@@ -7,28 +7,20 @@ import * as Validators from "./Exam.validation.js";
 import QuestionRouter from "../Qesustion/Questions.Router.js"
 const router = Router({mergeParams:true}) // internal navigate
 
-// router.use("/:examId/Result",ResualtRouter)  // internal navigate
-
 //Exam routers
 router.post("/", validation(Validators.CraetExam),authentication(AccessRoles.instructorRole), ExamControler.CraetExam)
 // fetched Exams
-router.get("/", authentication(AccessRoles.MultipleRole), ExamControler.GetExams)
+router.get("/", authentication(AccessRoles.DoupleRole), ExamControler.GetExams)
 // fetched  spacefic Exam
-router.get("/:id",validation(Validators.GetExamById) ,authentication(AccessRoles.MultipleRole), ExamControler.GetExamById)
+router.get("/:id",validation(Validators.GetExamById) ,authentication(AccessRoles.general), ExamControler.GetExamById)
 // update Exam by id
 router.put("/update/:id", authentication(AccessRoles.instructorRole), ExamControler.UpdateExam)
 // Student get and write exam
-router.post("/:id",validation(Validators.writeExam),authentication(AccessRoles.userrole),ExamControler.WriteExam)
+router.post("/:id",validation(Validators.writeExam),authentication(AccessRoles.Student),ExamControler.TakeExam)
 // Delete Exam
-router.delete("/:id", authentication(AccessRoles.instructorRole), ExamControler.DeleteExam)
-
+router.delete("/:id", authentication(AccessRoles.DoupleRole), ExamControler.DeleteExam)
+// Update Exam staus
 router.put("/:examId", authentication(AccessRoles.Admin), ExamControler.updateExamStatus)
-
-
-
-
-
-
 
 
 

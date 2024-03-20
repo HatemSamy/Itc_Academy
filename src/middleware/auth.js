@@ -1,22 +1,22 @@
 import jwt from 'jsonwebtoken'
 import UserModel from '../../DB/model/user.model.js'
 import { asynchandlier } from '../services/erroeHandling.js'
-import InstructorModel from '../../DB/model/Instructor.model.js'
+
 
 
 export const Roles = {
     Admin: "Admin",
-    User: "user",
+    Student: "student",
     instructor: "instructor"
 
 }
 
 export const AccessRoles = {
     create: [Roles.Admin],
-    general: [Roles.Admin,Roles.User,Roles.instructor],
+    general: [Roles.Admin,Roles.Student,Roles.instructor],
     Admin: [Roles.Admin],
-    userrole: [Roles.User],
-    MultipleRole: [Roles.instructor, Roles.User ,Roles.Admin],
+    Student: [Roles.Student],
+    // MultipleRole: [Roles.instructor, Roles.Student ,Roles.Admin],
     DoupleRole: [Roles.instructor,Roles.Admin],
     instructorRole:[Roles.instructor]
 
@@ -25,19 +25,19 @@ export const AccessRoles = {
 
 
 
-export const selectModel = (role) => {
-    let userCollection;
+// export const selectModel = (role) => {
+//     let userCollection;
 
-    if (role === 'user' || role === 'Admin' ) {
-        userCollection = UserModel;
-    } else if (role === 'instructor') {
-        userCollection = InstructorModel;
-    } else {
-        return null;
-    }
-    return userCollection
+//     if (role === 'user' || role === 'Admin' ) {
+//         userCollection = UserModel;
+//     } else if (role === 'instructor') {
+//         userCollection = InstructorModel;
+//     } else {
+//         return null;
+//     }
+//     return userCollection
 
-}
+// }
 
 
 
@@ -85,44 +85,41 @@ export const selectModel = (role) => {
 
 export const authentication = (accessRole) => {
     return asynchandlier(async (req, res, next) => {
-       
-            const { authorization } = req.headers;
-            
-            if (!authorization?.startsWith(process.env.BearerKey)) {
-                return res.status(404).json({message:"Invalid bearer key"})
-
-            }
-
-            const token = authorization.split(process.env.BearerKey)[1];
-            const decoded = await jwt.verify(token, process.env.tokenSignature);
-
-            // Extract role from the token payload
-            const userRole = decoded.role;
-
-            if (!userRole) {
-                return res.status(404).json({message:"Invalid token payload: role not found"})
-
-            }
-
-            // Check if the user exists in the database based on the role
-            let user;
-            if (userRole === 'instructor') {
-                user = await InstructorModel.findById(decoded.userId)
-            } else {
-                user = await UserModel.findById(decoded.userId);
-            }
+        const { authorization } = req.headers;
         
-            if (!user || user===null) {
-                return res.status(404).json({message:"Logged user not found"})
-             
-            }
+        if (!authorization?.startsWith(process.env.BearerKey)) {
+            return res.status(404).json({ message: "Invalid bearer key" });
+        }
 
-            if (!accessRole.includes(user.role)) {
-               return res.status(400).json({message:"access Denied , not authraized role"})
+        const token = authorization.split(process.env.BearerKey)[1];
+        const decoded = await jwt.verify(token, process.env.tokenSignature);
+
+        // Extract role from the token payload
+        const userRole = decoded.role;
+
+        if (!userRole) {
+            return res.status(404).json({ message: "Invalid token payload: role not found" });
+        }
+
+        const user = await UserModel.findById(decoded.userId);
+
+        if (!user || user === null) {
+            return res.status(404).json({ message: "Logged user not found" });
+        }
+
+        if (!accessRole.includes(user.role)) {
+            return res.status(400).json({ message: "Access Denied, not authorized role" });
+        }
+
+        if (accessRole.includes('instructor')) {
+            if (!user.active) {
+                return res.status(400).json({ message: "Instructor is not active" });
             }
-            req.user = user;
-            next();
-        
-    })
-}
+        }
+
+        req.user = user;
+        next();
+    });
+};
+
 
