@@ -27,7 +27,15 @@ export const signup = asynchandlier(async (req, res, next) => {
     const info = await sendEmail(req.body.email, "confirmEmail", message)
     if (info?.accepted?.length) {
         const savedUser = await newUser.save()
-        return res.status(201).json({ massage: "Accouent Created successfully", userId: savedUser._id })
+
+
+        savedUser.toJSON = function () {
+            const obj = this.toObject();
+            delete obj.password;
+            return obj;
+        };
+
+        return res.status(201).json({ massage: "Accouent Created successfully", savedUser })
 
     } else {
         return next(new Error("email regicted"))
@@ -57,9 +65,14 @@ export const signin = asynchandlier(async (req, res,next) => {
         return next(new Error('Invalid credentials',400));
 
     }
+    user.toJSON = function () {
+        const obj = this.toObject();
+        delete obj.password;
+        return obj;
+    };
 
     const token = jwt.sign({ name: user.firstName, role: user.role, userId: user._id }, process.env.tokenSignature);
-    return res.json({ message: "Success Signin", UserId: user._id, token });
+    return res.json({ message: "Success Signin",token , UserData:user});
 
 
 })
@@ -98,7 +111,7 @@ export const confirmEmail= asynchandlier(async(req,res,next)=>{
     
      const User= await UserModel.findOneAndUpdate({_id:decoded.id,confirmEmail:false},{confirmEmail:true})
      console.log(User);
-      return res.status(200).json({message:"E-mail confirmed successfuly",UserId:User._id})
+      return res.status(200).json({message:"E-mail confirmed successfuly Plz login"})
     
 
     }})

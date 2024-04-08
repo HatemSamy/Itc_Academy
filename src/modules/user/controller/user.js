@@ -20,3 +20,16 @@ export const upgradeUserRole =asynchandlier(async (req, res) => {
         }
 
 });
+
+
+export const GetAllStududents =asynchandlier(async (req, res) => {
+   
+        const Students = await UserModel.find({role:"student"}).select("-password -updatedAt -createdAt -confirmEmail ")
+        if (!Students) {
+            return res.status(404).json({ message: 'Not Found Any Users' });
+        }
+     
+        
+      return res.status(400).json({ message: 'Student Data',StudentData:Students });
+
+});
