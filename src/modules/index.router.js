@@ -10,21 +10,9 @@ import QuestionRouter from './Qesustion/Questions.Router.js'
 import  GroupRouter from './group/group.router.js'
 import  AbsenceRouter from './Absence/Absence.router.js'
 import  UserRouter from './user/user.router.js'
-import  ReviewRouter from './review/review.router.js'
-
-import  PaymentRouter from './payment/payment.router.js'
-
-
+// import  ReviewRouter from './review/review.router.js'
+// import  PaymentRouter from './payment/payment.router.js'
 // import  MeetingRouter from './meetIntegration/meeting.router.js'
-
-
-
-
-
-
-
-
-
 
 
 
@@ -43,6 +31,6 @@ export {
     GroupRouter,
     AbsenceRouter,
     UserRouter,
-    PaymentRouter,
-    ReviewRouter
+    // PaymentRouter,
+    // ReviewRouter
 }

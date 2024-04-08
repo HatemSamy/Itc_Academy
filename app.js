@@ -32,10 +32,8 @@ app.use(`${baseUrl}/Question`, indexRouter.QuestionRouter)
 app.use(`${baseUrl}/group`, indexRouter.GroupRouter)
 app.use(`${baseUrl}/Absence`, indexRouter.AbsenceRouter)
 app.use(`${baseUrl}/User`, indexRouter.UserRouter)
-app.use(`${baseUrl}/review`, indexRouter.ReviewRouter)
-app.use(`${baseUrl}/Payment`, indexRouter.PaymentRouter)
-
-
+// app.use(`${baseUrl}/review`, indexRouter.ReviewRouter)
+// app.use(`${baseUrl}/Payment`, indexRouter.PaymentRouter)
 // app.use(`${baseUrl}/meeting`, indexRouter.MeetingRouter)
 
 
