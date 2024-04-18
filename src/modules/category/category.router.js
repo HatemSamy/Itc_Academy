@@ -9,7 +9,7 @@ const router = Router();
 
 
 // Create categories
-router.post('/create',authentication(AccessRoles.Admin),myMulter(pathName.CreateCategory).single('image'),HME,categoryController.createCategory);
+router.post('/create',myMulter(pathName.CreateCategory).single('image'),HME,categoryController.createCategory);
 
 // Get all categories
 router.get('/AllCategories',categoryController.getAllCategories);
@@ -18,13 +18,13 @@ router.get('/AllCategories',categoryController.getAllCategories);
 router.get('/:id',categoryController.getSpecificCategory);
 
 // Update category by ID
-router.put('/:id', authentication(AccessRoles.Admin),myMulter(pathName.CreateCategory).single('image'),HME,categoryController.updateCategory);
+router.put('/:id',myMulter(pathName.CreateCategory).single('image'),HME,categoryController.updateCategory);
 
 // Delete category by ID
-router.delete('/:id',authentication(AccessRoles.Admin),categoryController.deleteCategory);
+router.delete('/:id',categoryController.deleteCategory);
 
 // Get recommended Category
-router.put('/recommended/:categoryId',authentication(AccessRoles.Admin),categoryController.recommendedCategory);
+router.put('/recommended/:categoryId',categoryController.recommendedCategory);
 
 // Get recommendedItems
 router.get('/',categoryController.recommendedItemsHandler);
