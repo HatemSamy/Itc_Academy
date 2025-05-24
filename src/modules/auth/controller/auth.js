@@ -145,7 +145,7 @@ export const forgetPassword = async (req, res, next) => {
     );
 
     if (updateUser) {
-        return res.json({ message: "Password reset successfully , Please Active your account " });
+        return res.json({ message: "Password reset successfully" });
     } else {
         return next(new Error("Failed to reset password"));
     }

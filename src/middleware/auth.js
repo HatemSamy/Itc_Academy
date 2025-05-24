@@ -113,7 +113,7 @@ export const authentication = (accessRole) => {
         }
 
         if (user.role === 'instructor' && !user.active) {
-            return res.status(400).json({ message: "Your account is inactive. Please contact support" });
+            return res.status(400).json({ message: "Your account is inactive. , Please Active your account" });
         }
 
         req.user = user;
