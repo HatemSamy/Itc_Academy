@@ -45,3 +45,12 @@ export const confirmEmail = {
 }
 
 
+export const forgetPassword = {
+
+    body: joi.object().required().keys({
+        code: joi.number().required(),
+        password: joi.string().required(),
+       
+    })
+}
+

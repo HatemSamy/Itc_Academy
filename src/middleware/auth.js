@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import UserModel from '../../DB/model/user.model.js'
 import { asynchandlier } from '../services/erroeHandling.js'
+import { log } from 'console'
 
 
 
@@ -13,12 +14,12 @@ export const Roles = {
 
 export const AccessRoles = {
     create: [Roles.Admin],
-    general: [Roles.Admin,Roles.Student,Roles.instructor],
+    general: [Roles.Admin, Roles.Student, Roles.instructor],
     Admin: [Roles.Admin],
     Student: [Roles.Student],
     // MultipleRole: [Roles.instructor, Roles.Student ,Roles.Admin],
-    DoupleRole: [Roles.instructor,Roles.Admin],
-    instructorRole:[Roles.instructor]
+    DoupleRole: [Roles.instructor, Roles.Admin],
+    instructorRole: [Roles.instructor]
 
 }
 
@@ -72,7 +73,7 @@ export const AccessRoles = {
 //                     req.user = user
 //                     next() 
 //                 }
-            
+
 //             }
 
 //         }
@@ -86,7 +87,7 @@ export const AccessRoles = {
 export const authentication = (accessRole) => {
     return asynchandlier(async (req, res, next) => {
         const { authorization } = req.headers;
-        
+
         if (!authorization?.startsWith(process.env.BearerKey)) {
             return res.status(404).json({ message: "Invalid bearer key" });
         }
@@ -111,10 +112,8 @@ export const authentication = (accessRole) => {
             return res.status(400).json({ message: "Access Denied, not authorized role" });
         }
 
-        if (accessRole.includes('instructor')) {
-            if (!user.active) {
-                return res.status(400).json({ message: "Instructor is not active" });
-            }
+        if (user.role === 'instructor' && !user.active) {
+            return res.status(400).json({ message: "Your account is inactive. Please contact support" });
         }
 
         req.user = user;
